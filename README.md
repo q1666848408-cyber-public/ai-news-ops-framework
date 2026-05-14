@@ -1,84 +1,63 @@
-<div align="center">
+# AI-News-Ops-Framework
 
-# 📰 AI News Ops Framework
+![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)
 
-[![Claude Code](https://img.shields.io/badge/Claude-Code-D4A843?style=flat-square&logo=anthropic&logoColor=white)](https://claude.com/code)
-[![Skills](https://img.shields.io/badge/Skills-12+-7B68EE?style=flat-square)](https://github.com)
-[![Slash Commands](https://img.shields.io/badge/Slash-Commands-FF6B35?style=flat-square)](https://github.com)
-[![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
+> **Showcase** — ~15% skeleton. Core implementation not included.
 
-**Claude Code-driven content operations skeleton — Skills + Slash Commands + content library conventions for multi-platform publishing**
+Content operations framework driven by Claude Code CLI. Team workflows are encoded as Skills and Slash Commands. The system collects trending topics, generates multi-platform copy, and produces accompanying image and video assets.
 
-> ⚠️ **Showcase Only** — ~15% skeleton. Production skills, internal templates & content library not included.
+## Stack
 
-</div>
+- Python, Node.js
+- Claude Code CLI (Skills + Slash Commands)
+- Feishu Bitable (content database)
+- Image/video asset generation integrations
 
----
+## Concepts
 
-## ✨ Overview
+**Skills** — reusable Claude Code skill files that encapsulate a repeatable operation (e.g., `fetch-trends`, `write-copy`, `render-card`).
 
-A reusable scaffolding for AI content teams. It encodes the team's content workflow as Claude Code Skills and Slash Commands — from sourcing trending topics to producing multi-platform copy + video assets — so each new piece of content follows the same proven pipeline.
+**Slash Commands** — operator-facing commands that chain skills into a named workflow (e.g., `/daily-run`, `/publish-batch`).
 
-Pairs with a separate rendering engine (graphic + video) for asset production.
-
----
-
-## 🏗️ Architecture
+## Workflow
 
 ```
-  Trending Sources              Claude Code Agent
- ┌──────────────┐               ┌──────────────────┐
- │ GitHub       │               │  Skills          │
- │ X / Twitter  │──── intel ───►│  · news-fetch    │
- │ Tech Blogs   │               │  · copywriting   │
- └──────────────┘               │  · multi-platform│
-                                │  · render-bridge │
-                                └────────┬─────────┘
-                                         │
-                              ┌──────────▼──────────┐
-                              │  Slash Commands     │
-                              │  /publish-juejin    │
-                              │  /publish-zhihu     │
-                              │  /generate-video    │
-                              └──────────┬──────────┘
-                                         │
-                                         ▼
-                              ┌─────────────────────┐
-                              │  Content Library    │
-                              │  (versioned MD)     │
-                              └─────────────────────┘
+/daily-run
+    └── fetch-trends skill      # aggregates hot topics
+         └── write-copy skill   # generates per-platform copy
+              └── render-card skill   # produces image assets
+                   └── render-video skill  # produces video assets
+                        └── notify skill   # posts summary to Lark
 ```
 
----
+## Usage
 
-## 📁 Structure
+```bash
+# Install dependencies
+npm install && pip install -r requirements.txt
+
+# Run the daily pipeline
+claude /daily-run
+
+# Fetch trends only
+claude /fetch-trends --sources weibo,toutiao
+
+# Generate copy for a specific topic
+claude /write-copy --topic "AI news" --platforms juejin,zhihu
+```
+
+## Structure
 
 ```
-ai-news-ops-framework/
+AI-News-Ops-Framework/
 ├── .claude/
-│   └── skills/
-│       ├── news-fetch-skill/
-│       │   └── SKILL.md
-│       └── copywriting-skill/
-│           └── SKILL.md
-├── workflow-guide/
-│   └── README.md             # End-to-end usage
-└── content_library/.gitkeep   # Versioned content output
+│   ├── commands/      # slash command definitions
+│   └── skills/        # reusable skill files
+├── scripts/           # Python utility scripts
+├── templates/         # copy and image templates
+└── config.yaml
 ```
 
----
+## Adding a Skill
 
-## 🔧 Tech Stack
-
-| Layer | Technology |
-|---|---|
-| Agent Platform | Claude Code |
-| Format | Markdown skill files + slash command files |
-| Asset Pipeline | Bridges to `ai-content-rendering-engine` |
-| Source Control | Git (versioned content) |
-
----
-
-<div align="center">
-<sub>Showcase version · Production skills not included · For portfolio reference only</sub>
-</div>
+Create a markdown file in `.claude/skills/` describing the skill's purpose, inputs, and expected outputs. Claude Code loads all skills in that directory automatically.
